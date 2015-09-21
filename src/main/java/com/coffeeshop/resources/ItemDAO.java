@@ -26,9 +26,10 @@ public interface ItemDAO {
     @SqlQuery("SELECT * FROM item")
     List<Coffeeshop> findAllItem();
 
-    @Mapper(CoffeeshopMapper.class)
+    //TODO Enable this SELECT mapper after deciding whether id should come from backend or frontend
+/*    @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE id = :id")
-    Coffeeshop findItemById(@Bind("id") int id);
+    Coffeeshop findItemById(@Bind("id") int id);*/
 
     @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE name LIKE :pattern")
@@ -38,11 +39,12 @@ public interface ItemDAO {
     @SqlUpdate("INSERT INTO item (name, costInCents) VALUES (:name, :costInCents)")
     void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents);
 
+    //TODO Decide whether id should come from backend or frontend
     //Remove Items individually
-    @SqlUpdate("DELETE FROM item WHERE VALUES name = :name")
-    void removeItem(@Bind("name") String name);
+    @SqlUpdate("DELETE FROM item WHERE id = :id")
+    void removeItem(@Bind("id") int id);
 
     //Remove Items in group
     @SqlUpdate("DELETE FROM item WHERE name LIKE :pattern")
-    void removeGroupItemByName(@Bind("name") String name);
+    void removeGroupItemByName(@Bind("pattern") String pattern);
 }

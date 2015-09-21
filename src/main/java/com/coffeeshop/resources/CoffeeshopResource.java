@@ -2,12 +2,15 @@ package com.coffeeshop.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.coffeeshop.core.Coffeeshop;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jersey.repackaged.com.google.common.base.Optional;
 import org.skife.jdbi.v2.DBI;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/coffeeshop")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class CoffeeshopResource {
 
     private final ItemDAO itemDao;
@@ -55,7 +59,7 @@ public class CoffeeshopResource {
 
     @GET
     @Timed
-    @Path("/all")
+    @Path("/retrieve/all")
     public List<Coffeeshop> findAllOrder() {
         // retrieve all order items
         List<Coffeeshop> itemList = itemDao.findAllItem();
@@ -66,12 +70,71 @@ public class CoffeeshopResource {
 
     @GET
     @Timed
-    @Path("/{userPattern}")
+    @Path("/retrieve/{userPattern}")
     public List<Coffeeshop> findGroupedItem(@PathParam("userPattern") String userPattern) {
-        // retrieve all order items
+        System.err.println(userPattern);
+        // retrieve grouped items
         List<Coffeeshop> itemList = itemDao.findItemByName("%" + userPattern + "%");
         if (itemList != null) {
             return itemList;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @POST
+    @Timed
+    @Path("/add")
+    public Response updateOrderItem(Coffeeshop item){
+        //int id = 1; // = itemDao.xxx();
+
+        //TODO Price and item validation on the client side ??!
+        try {
+            itemDao.updateItem(item.getName(), item.getCostInCents());
+            System.err.println("Added order item " + item.getName() + " " + item.getCostInCents());
+            return Response.status(Response.Status.CREATED).build();
+            //return Response.noContent().build();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).build();
+            //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+        }
+
+        //TODO Optimise SQL of updating and displaying all orders back at the same time
+    }
+
+    @POST
+    @Timed
+    @Path("/cancel_item/{id}")
+    public Response cancelItem(@PathParam("id") int id){
+
+        //TODO How to delete based on id only in a non-Coffeeshop JSON object ?
+        System.err.println(id);
+        try{
+            itemDao.removeItem(id);
+            return Response.noContent().build();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).build();
+            //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+        }
+    }
+
+    @POST
+    @Timed
+    @Path("/cancel_group_item/{userPattern}")
+    public Response cancelGroupItem(@PathParam("userPattern") String userPattern){
+
+        //TODO How to delete based on userPattern in a non-Coffeeshop JSON object ?
+        System.err.println(userPattern);
+        try{
+            itemDao.removeGroupItemByName("%" + userPattern + "%");
+            return Response.noContent().build();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).build();
+            //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+        }
     }
 }
