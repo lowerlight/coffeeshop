@@ -18,8 +18,8 @@ import io.dropwizard.db.*;
  */
 
 public class CoffeeshopConf extends Configuration {
-    @Valid
-    @NotNull
+    //@Valid
+    //@Null
     @JsonProperty("database")
     private DataSourceFactory database = new DataSourceFactory();
 

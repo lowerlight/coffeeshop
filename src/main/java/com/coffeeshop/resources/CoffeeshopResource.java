@@ -41,7 +41,8 @@ public class CoffeeshopResource {
     //final String value = String.format(template, defaultName);
     //return new Coffeeshop(((int) counter.incrementAndGet()), value, cost);
 
-    @GET
+    //Ambiguous return type, so use pattern instead of id (unlikely need to use id)D
+/*    @GET
     @Timed
     @Path("/{id}")
     public Coffeeshop findOrder(@PathParam("id") int id) {
@@ -50,7 +51,7 @@ public class CoffeeshopResource {
         if (item != null) {
             return item;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
+    }*/
 
     @GET
     @Timed
@@ -58,6 +59,17 @@ public class CoffeeshopResource {
     public List<Coffeeshop> findAllOrder() {
         // retrieve all order items
         List<Coffeeshop> itemList = itemDao.findAllItem();
+        if (itemList != null) {
+            return itemList;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Timed
+    @Path("/{userPattern}")
+    public List<Coffeeshop> findGroupedItem(@PathParam("userPattern") String userPattern) {
+        // retrieve all order items
+        List<Coffeeshop> itemList = itemDao.findItemByName("%" + userPattern + "%");
         if (itemList != null) {
             return itemList;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);

@@ -32,7 +32,7 @@ public interface ItemDAO {
 
     @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE name LIKE :pattern")
-    Coffeeshop findItemByName(@Bind("pattern") String pattern);
+    List<Coffeeshop> findItemByName(@Bind("pattern") String pattern);
 
     //Add Items individually
     @SqlUpdate("INSERT INTO item (name, costInCents) VALUES (:name, :costInCents)")
