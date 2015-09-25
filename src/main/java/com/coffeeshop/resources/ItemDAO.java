@@ -19,25 +19,33 @@ import java.util.List;
  */
 public interface ItemDAO {
     @SqlUpdate("CREATE TABLE IF NOT EXISTS item" +
-            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER")
+            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
     void createItemTable();
 
+    //#index
     @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item")
     List<Coffeeshop> findAllItem();
 
-    //TODO Enable this SELECT mapper after deciding whether id should come from backend or frontend
-/*    @Mapper(CoffeeshopMapper.class)
+    //new
+
+
+
+    //#show
+    @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE id = :id")
-    Coffeeshop findItemById(@Bind("id") int id);*/
+    Coffeeshop findItemById(@Bind("id") int id);
+
+    //#create
+    @SqlUpdate("INSERT INTO item (name, costInCents) VALUES (:name, :costInCents)")
+    void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents);
+
+
+    //Not supported yet=============================================================================
 
     @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE name LIKE :pattern")
     List<Coffeeshop> findItemByName(@Bind("pattern") String pattern);
-
-    //Add Items individually
-    @SqlUpdate("INSERT INTO item (name, costInCents) VALUES (:name, :costInCents)")
-    void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents);
 
     //TODO Decide whether id should come from backend or frontend
     //Remove Items individually
