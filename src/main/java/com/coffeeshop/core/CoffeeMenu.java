@@ -1,32 +1,29 @@
 package com.coffeeshop.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * *************************************************************************************************
  * <p/>
  * Project : coffeeshop-api
- * Filename : Coffeeshop.java
+ * Filename : CoffeeMenu.java
  * <p/>
  * *************************************************************************************************
  */
 
-public class Coffeeshop {
+public class CoffeeMenu {
     private int id;
     private String name;
     private int costInCents;
-    private int menuId;
 
-    public Coffeeshop() {
+    public CoffeeMenu() {
         // Jackson deserialization
     }
 
-    public Coffeeshop(int id, String name, int costInCents, int menuId) {
+    public CoffeeMenu(int id, String name, int costInCents) {
         this.id = id;
         this.name = name;
         this.costInCents = costInCents;
-        this.menuId = menuId;
     }
 
     @JsonProperty
@@ -42,10 +39,5 @@ public class Coffeeshop {
     @JsonProperty
     public int getCostInCents() {
         return costInCents;
-    }
-
-    @JsonProperty
-    public int getMenuId() {
-        return menuId;
     }
 }

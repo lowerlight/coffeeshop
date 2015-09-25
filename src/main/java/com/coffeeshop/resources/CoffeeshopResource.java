@@ -1,18 +1,14 @@
 package com.coffeeshop.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.coffeeshop.core.CoffeeMenu;
 import com.coffeeshop.core.Coffeeshop;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jersey.repackaged.com.google.common.base.Optional;
 import org.skife.jdbi.v2.DBI;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * *************************************************************************************************
@@ -26,7 +22,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/coffeeshop")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CoffeeshopResource {
+public class CoffeeshopResource //implements Switch
+{
 
     private final ItemDAO itemDao;
     private final String template;
@@ -45,21 +42,10 @@ public class CoffeeshopResource {
     //final String value = String.format(template, defaultName);
     //return new Coffeeshop(((int) counter.incrementAndGet()), value, cost);
 
-    //Ambiguous return type, so use pattern instead of id (unlikely need to use id)D
-/*    @GET
-    @Timed
-    @Path("/{id}")
-    public Coffeeshop findOrder(@PathParam("id") int id) {
-        // retrieve information about the drink with the provided id
-        Coffeeshop item = itemDao.findItemById(id);
-        if (item != null) {
-            return item;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }*/
-
+    //#index
     @GET
     @Timed
-    @Path("/retrieve/all")
+    @Path("/items.json")
     public List<Coffeeshop> findAllOrder() {
         // retrieve all order items
         List<Coffeeshop> itemList = itemDao.findAllItem();
@@ -68,25 +54,22 @@ public class CoffeeshopResource {
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    @GET
-    @Timed
-    @Path("/retrieve/{userPattern}")
-    public List<Coffeeshop> findGroupedItem(@PathParam("userPattern") String userPattern) {
-        System.err.println(userPattern);
-        // retrieve grouped items
-        List<Coffeeshop> itemList = itemDao.findItemByName("%" + userPattern + "%");
-        if (itemList != null) {
-            return itemList;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
+    //new
 
+
+    //#create
     @POST
     @Timed
-    @Path("/add")
-    public Response updateOrderItem(Coffeeshop item){
-        //int id = 1; // = itemDao.xxx();
+    @Path("/items.json/{id}")
+    public Response updateOrderItem(Coffeeshop item, @PathParam("id") int menuId)
+        //implements Switch
+    {
+        //menuDao = getMenuDao();
+        //CoffeeMenu menu = menuDao.findMenu(menuId);
 
-        //TODO Price and item validation on the client side ??!
+
+
+
         try {
             itemDao.updateItem(item.getName(), item.getCostInCents());
             System.err.println("Added order item " + item.getName() + " " + item.getCostInCents());
@@ -102,9 +85,22 @@ public class CoffeeshopResource {
         //TODO Optimise SQL of updating and displaying all orders back at the same time
     }
 
-    @POST
+    //#show
+    @GET
     @Timed
-    @Path("/cancel_item/{id}")
+    @Path("/items.json/{id}")
+    public Coffeeshop findOrder(@PathParam("id") int id) {
+        // retrieve information about the drink with the provided id
+        Coffeeshop item = itemDao.findItemById(id);
+        if (item != null) {
+            return item;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //#destroy
+    @DELETE
+    @Timed
+    @Path("/items.json/{id}")
     public Response cancelItem(@PathParam("id") int id){
 
         //TODO How to delete based on id only in a non-Coffeeshop JSON object ?
@@ -118,6 +114,21 @@ public class CoffeeshopResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
             //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
+    }
+
+    //Not supported yet=============================================================================
+
+    /*
+    @GET
+    @Timed
+    @Path("/items.json/{userPattern}")
+    public List<Coffeeshop> findGroupedItem(@PathParam("userPattern") String userPattern) {
+        System.err.println(userPattern);
+        // retrieve grouped items
+        List<Coffeeshop> itemList = itemDao.findItemByName("%" + userPattern + "%");
+        if (itemList != null) {
+            return itemList;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @POST
@@ -137,4 +148,5 @@ public class CoffeeshopResource {
             //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
+    */
 }
