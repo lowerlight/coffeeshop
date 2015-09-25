@@ -34,10 +34,6 @@ public class CoffeeMenuResource {
         //this.counter = new AtomicLong();
     }
 
-    public MenuDAO getMenuDao(){
-        return this.menuDao;
-    }
-
     //#index
     @GET
     @Timed

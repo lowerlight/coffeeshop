@@ -1,6 +1,8 @@
 package com.coffeeshop.resources;
 
+import com.coffeeshop.core.CoffeeMenu;
 import com.coffeeshop.core.Coffeeshop;
+import com.coffeeshop.mappers.CoffeeMenuMapper;
 import com.coffeeshop.mappers.CoffeeshopMapper;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -27,18 +29,18 @@ public interface ItemDAO {
     @SqlQuery("SELECT * FROM item")
     List<Coffeeshop> findAllItem();
 
-    //new
-
-
+    //#create
+    @Mapper(CoffeeMenuMapper.class)
+    @SqlQuery("SELECT * FROM menus WHERE id = :id")
+    CoffeeMenu prepareItemFromMenuId(@Bind("id") int menuId);
+    @SqlUpdate("INSERT INTO item (name, costInCents, menuId) VALUES (:name, :costInCents, :menuId)")
+    void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents,
+                    @Bind("menuId") int menuId);
 
     //#show
     @Mapper(CoffeeshopMapper.class)
     @SqlQuery("SELECT * FROM item WHERE id = :id")
     Coffeeshop findItemById(@Bind("id") int id);
-
-    //#create
-    @SqlUpdate("INSERT INTO item (name, costInCents) VALUES (:name, :costInCents)")
-    void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents);
 
 
     //Not supported yet=============================================================================
@@ -47,7 +49,6 @@ public interface ItemDAO {
     @SqlQuery("SELECT * FROM item WHERE name LIKE :pattern")
     List<Coffeeshop> findItemByName(@Bind("pattern") String pattern);
 
-    //TODO Decide whether id should come from backend or frontend
     //Remove Items individually
     @SqlUpdate("DELETE FROM item WHERE id = :id")
     void removeItem(@Bind("id") int id);

@@ -54,24 +54,18 @@ public class CoffeeshopResource //implements Switch
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    //new
-
-
     //#create
     @POST
     @Timed
     @Path("/items.json/{id}")
-    public Response updateOrderItem(Coffeeshop item, @PathParam("id") int menuId)
-        //implements Switch
+    public Response createItem(@PathParam("id") int menuId)
     {
-        //menuDao = getMenuDao();
-        //CoffeeMenu menu = menuDao.findMenu(menuId);
-
-
-
+        CoffeeMenu menu = itemDao.prepareItemFromMenuId(menuId);
+        Coffeeshop item = new Coffeeshop(menu.getId(), menu.getName(),
+                            menu.getCostInCents(), menuId);
 
         try {
-            itemDao.updateItem(item.getName(), item.getCostInCents());
+            itemDao.updateItem(item.getName(), item.getCostInCents(), item.getMenuId());
             System.err.println("Added order item " + item.getName() + " " + item.getCostInCents());
             return Response.status(Response.Status.CREATED).build();
             //return Response.noContent().build();
