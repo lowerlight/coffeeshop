@@ -1,6 +1,5 @@
 package com.coffeeshop.api;
 
-import com.coffeeshop.resources.CoffeeMenuResource;
 import io.dropwizard.Application;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
@@ -38,12 +37,10 @@ public class CoffeeshopApp extends Application<CoffeeshopConf> {
                     Environment env) {
 
         final DBI jdbi = new DBIFactory().build(env, config.getDataSourceFactory(), "sqlite3");
+
         final CoffeeshopResource resource = new CoffeeshopResource(jdbi, config.getTemplate(),
                 config.getDefaultName());
         env.jersey().register(resource);
-        final CoffeeMenuResource menuResource = new CoffeeMenuResource(jdbi, config.getTemplate(),
-                config.getDefaultName());
-        env.jersey().register(menuResource);
 
         final TemplateHealthCheck healthCheck = new TemplateHealthCheck(config.getTemplate());
         env.healthChecks().register("template", healthCheck);

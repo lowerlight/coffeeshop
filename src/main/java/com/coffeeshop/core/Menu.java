@@ -6,21 +6,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * *************************************************************************************************
  * <p/>
  * Project : coffeeshop-api
- * Filename : CoffeeMenu.java
+ * Filename : Menu.java
  * <p/>
  * *************************************************************************************************
  */
 
-public class CoffeeMenu {
+public class Menu {
     private int id;
     private String name;
     private int costInCents;
 
-    public CoffeeMenu() {
+    public Menu() {
         // Jackson deserialization
     }
 
-    public CoffeeMenu(int id, String name, int costInCents) {
+    public Menu(int id, String name, int costInCents) {
         this.id = id;
         this.name = name;
         this.costInCents = costInCents;

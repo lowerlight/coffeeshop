@@ -7,22 +7,22 @@ import org.hibernate.validator.constraints.Length;
  * *************************************************************************************************
  * <p/>
  * Project : coffeeshop-api
- * Filename : Coffeeshop.java
+ * Filename : Item.java
  * <p/>
  * *************************************************************************************************
  */
 
-public class Coffeeshop {
+public class Item {
     private int id;
     private String name;
     private int costInCents;
     private int menuId;
 
-    public Coffeeshop() {
+    public Item() {
         // Jackson deserialization
     }
 
-    public Coffeeshop(int id, String name, int costInCents, int menuId) {
+    public Item(int id, String name, int costInCents, int menuId) {
         this.id = id;
         this.name = name;
         this.costInCents = costInCents;

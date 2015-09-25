@@ -1,8 +1,8 @@
 package com.coffeeshop.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.coffeeshop.core.CoffeeMenu;
-import com.coffeeshop.core.Coffeeshop;
+import com.coffeeshop.core.Menu;
+import com.coffeeshop.core.Item;
 import org.skife.jdbi.v2.DBI;
 
 import javax.ws.rs.*;
@@ -24,14 +24,13 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CoffeeshopResource //implements Switch
 {
-
-    private final ItemDAO itemDao;
+    private final CoffeeshopDAO coffeeshopDao;
     private final String template;
     private final String defaultName;
     //private final AtomicLong counter;
 
     public CoffeeshopResource(DBI jdbi, String template, String defaultName) {
-        this.itemDao = jdbi.onDemand(ItemDAO.class);
+        this.coffeeshopDao = jdbi.onDemand(CoffeeshopDAO.class);
         this.template = template;
         this.defaultName = defaultName;
         //this.counter = new AtomicLong();
@@ -40,15 +39,15 @@ public class CoffeeshopResource //implements Switch
     //Sample usage:
     //final int cost = 0;
     //final String value = String.format(template, defaultName);
-    //return new Coffeeshop(((int) counter.incrementAndGet()), value, cost);
+    //return new Item(((int) counter.incrementAndGet()), value, cost);
 
     //#index
     @GET
     @Timed
     @Path("/items.json")
-    public List<Coffeeshop> findAllOrder() {
+    public List<Item> findAllOrder() {
         // retrieve all order items
-        List<Coffeeshop> itemList = itemDao.findAllItem();
+        List<Item> itemList = coffeeshopDao.findAllItem();
         if (itemList != null) {
             return itemList;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -60,12 +59,12 @@ public class CoffeeshopResource //implements Switch
     @Path("/items/new/{menuId}.json")
     public Response createItem(@PathParam("menuId") int menuId)
     {
-        CoffeeMenu menu = itemDao.prepareItemFromMenuId(menuId);
-        Coffeeshop item = new Coffeeshop(menu.getId(), menu.getName(),
+        Menu menu = coffeeshopDao.prepareItemFromMenuId(menuId);
+        Item item = new Item(menu.getId(), menu.getName(),
                             menu.getCostInCents(), menuId);
 
         try {
-            itemDao.updateItem(item.getName(), item.getCostInCents(), item.getMenuId());
+            coffeeshopDao.updateItem(item.getName(), item.getCostInCents(), item.getMenuId());
             System.err.println("Added order item " + item.getName() + " " + item.getCostInCents());
             return Response.status(Response.Status.CREATED).build();
             //return Response.noContent().build();
@@ -83,9 +82,9 @@ public class CoffeeshopResource //implements Switch
     @GET
     @Timed
     @Path("/items.json/{id}")
-    public Coffeeshop findOrder(@PathParam("id") int id) {
+    public Item findOrder(@PathParam("id") int id) {
         // retrieve information about the drink with the provided id
-        Coffeeshop item = itemDao.findItemById(id);
+        Item item = coffeeshopDao.findItemById(id);
         if (item != null) {
             return item;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -97,10 +96,10 @@ public class CoffeeshopResource //implements Switch
     @Path("/items.json/{id}")
     public Response cancelItem(@PathParam("id") int id){
 
-        //TODO How to delete based on id only in a non-Coffeeshop JSON object ?
+        //TODO How to delete based on id only in a non-Item JSON object ?
         System.err.println(id);
         try{
-            itemDao.removeItem(id);
+            coffeeshopDao.removeItem(id);
             return Response.noContent().build();
         }
         catch(Exception e) {
@@ -110,16 +109,40 @@ public class CoffeeshopResource //implements Switch
         }
     }
 
+    //#index
+    @GET
+    @Timed
+    @Path("/menus.json")
+    public List<Menu> findAllMenu() {
+        // retrieve all menu
+        List<Menu> menuList = coffeeshopDao.findAllMenu();
+        if (menuList != null) {
+            return menuList;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //#show
+    @GET
+    @Timed
+    @Path("/menus.json/{id}")
+    public Menu findMenu(@PathParam("id") int id) {
+        // retrieve information about the drink with the provided id
+        Menu menu = coffeeshopDao.findMenuById(id);
+        if (menu != null) {
+            return menu;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
     //Not supported yet=============================================================================
 
     /*
     @GET
     @Timed
     @Path("/items.json/{userPattern}")
-    public List<Coffeeshop> findGroupedItem(@PathParam("userPattern") String userPattern) {
+    public List<Item> findGroupedItem(@PathParam("userPattern") String userPattern) {
         System.err.println(userPattern);
         // retrieve grouped items
-        List<Coffeeshop> itemList = itemDao.findItemByName("%" + userPattern + "%");
+        List<Item> itemList = coffeeshopDao.findItemByName("%" + userPattern + "%");
         if (itemList != null) {
             return itemList;
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -130,10 +153,10 @@ public class CoffeeshopResource //implements Switch
     @Path("/cancel_group_item/{userPattern}")
     public Response cancelGroupItem(@PathParam("userPattern") String userPattern){
 
-        //TODO How to delete based on userPattern in a non-Coffeeshop JSON object ?
+        //TODO How to delete based on userPattern in a non-Item JSON object ?
         System.err.println(userPattern);
         try{
-            itemDao.removeGroupItemByName("%" + userPattern + "%");
+            coffeeshopDao.removeGroupItemByName("%" + userPattern + "%");
             return Response.noContent().build();
         }
         catch(Exception e) {
