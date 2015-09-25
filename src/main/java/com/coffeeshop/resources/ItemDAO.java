@@ -31,8 +31,8 @@ public interface ItemDAO {
 
     //#create
     @Mapper(CoffeeMenuMapper.class)
-    @SqlQuery("SELECT * FROM menus WHERE id = :id")
-    CoffeeMenu prepareItemFromMenuId(@Bind("id") int menuId);
+    @SqlQuery("SELECT * FROM menus WHERE id = :menuId")
+    CoffeeMenu prepareItemFromMenuId(@Bind("menuId") int menuId);
     @SqlUpdate("INSERT INTO item (name, costInCents, menuId) VALUES (:name, :costInCents, :menuId)")
     void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents,
                     @Bind("menuId") int menuId);

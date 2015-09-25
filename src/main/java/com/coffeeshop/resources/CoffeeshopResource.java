@@ -57,8 +57,8 @@ public class CoffeeshopResource //implements Switch
     //#create
     @POST
     @Timed
-    @Path("/items.json/{id}")
-    public Response createItem(@PathParam("id") int menuId)
+    @Path("/items/new/{menuId}.json")
+    public Response createItem(@PathParam("menuId") int menuId)
     {
         CoffeeMenu menu = itemDao.prepareItemFromMenuId(menuId);
         Coffeeshop item = new Coffeeshop(menu.getId(), menu.getName(),
