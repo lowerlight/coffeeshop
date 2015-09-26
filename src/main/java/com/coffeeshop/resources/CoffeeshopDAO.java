@@ -14,16 +14,12 @@ import java.util.List;
 /**
  * *************************************************************************************************
  * <p/>
- * Project : coffeeshop-api
+ * Project : Coffeeshop
  * Filename : CoffeeshopDAO.java
  * <p/>
  * *************************************************************************************************
  */
 public interface CoffeeshopDAO {
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS item" +
-            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
-    void createItemTable();
-
     //item#index
     @Mapper(ItemMapper.class)
     @SqlQuery("SELECT * FROM item")
@@ -37,11 +33,17 @@ public interface CoffeeshopDAO {
     void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents,
                     @Bind("menuId") int menuId);
 
+    //Initial order
+    @SqlUpdate("CREATE TABLE IF NOT EXISTS item" +
+            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
+    void createItemTable();
+
     //item#show
     @Mapper(ItemMapper.class)
     @SqlQuery("SELECT * FROM item WHERE id = :id")
     Item findItemById(@Bind("id") int id);
 
+    //Not for customer use
     @SqlUpdate("CREATE TABLE IF NOT EXISTS menus" +
             "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
     void createMenuTable();

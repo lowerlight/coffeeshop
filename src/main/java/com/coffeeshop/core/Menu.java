@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * *************************************************************************************************
  * <p/>
- * Project : coffeeshop-api
+ * Project : Coffeeshop
  * Filename : Menu.java
  * <p/>
  * *************************************************************************************************

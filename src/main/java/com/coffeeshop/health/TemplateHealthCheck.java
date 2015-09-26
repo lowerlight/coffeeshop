@@ -5,7 +5,7 @@ import com.codahale.metrics.health.HealthCheck;
 /**
  * *************************************************************************************************
  * <p/>
- * Project : coffeeshop-api
+ * Project : Coffeeshop
  * Filename : TemplateHealthCheck.java
  * <p/>
  * *************************************************************************************************

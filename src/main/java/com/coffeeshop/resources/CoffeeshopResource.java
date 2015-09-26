@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * *************************************************************************************************
  * <p/>
- * Project : coffeeshop-api
+ * Project : Coffeeshop
  * Filename : CoffeeshopResource.java
  * <p/>
  * *************************************************************************************************
@@ -22,8 +22,7 @@ import java.util.List;
 @Path("/coffeeshop")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CoffeeshopResource //implements Switch
-{
+public class CoffeeshopResource {
     private final CoffeeshopDAO coffeeshopDao;
     private final String template;
     private final String defaultName;
@@ -41,7 +40,7 @@ public class CoffeeshopResource //implements Switch
     //final String value = String.format(template, defaultName);
     //return new Item(((int) counter.incrementAndGet()), value, cost);
 
-    //#index
+    //items#index
     @GET
     @Timed
     @Path("/items.json")
@@ -53,7 +52,7 @@ public class CoffeeshopResource //implements Switch
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    //#create
+    //items#create
     @POST
     @Timed
     @Path("/items/new/{menuId}.json")
@@ -78,7 +77,7 @@ public class CoffeeshopResource //implements Switch
         //TODO Optimise SQL of updating and displaying all orders back at the same time
     }
 
-    //#show
+    //items#show
     @GET
     @Timed
     @Path("/items.json/{id}")
@@ -90,7 +89,33 @@ public class CoffeeshopResource //implements Switch
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    //#destroy
+    //menus#index
+    @GET
+    @Timed
+    @Path("/menus.json")
+    public List<Menu> findAllMenu() {
+        // retrieve all menu
+        List<Menu> menuList = coffeeshopDao.findAllMenu();
+        if (menuList != null) {
+            return menuList;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //menus#show
+    @GET
+    @Timed
+    @Path("/menus.json/{id}")
+    public Menu findMenu(@PathParam("id") int id) {
+        // retrieve information about the drink with the provided id
+        Menu menu = coffeeshopDao.findMenuById(id);
+        if (menu != null) {
+            return menu;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //Not supported yet=============================================================================
+
+    //items#destroy
     @DELETE
     @Timed
     @Path("/items.json/{id}")
@@ -108,32 +133,6 @@ public class CoffeeshopResource //implements Switch
             //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
-
-    //#index
-    @GET
-    @Timed
-    @Path("/menus.json")
-    public List<Menu> findAllMenu() {
-        // retrieve all menu
-        List<Menu> menuList = coffeeshopDao.findAllMenu();
-        if (menuList != null) {
-            return menuList;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
-    //#show
-    @GET
-    @Timed
-    @Path("/menus.json/{id}")
-    public Menu findMenu(@PathParam("id") int id) {
-        // retrieve information about the drink with the provided id
-        Menu menu = coffeeshopDao.findMenuById(id);
-        if (menu != null) {
-            return menu;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
-    //Not supported yet=============================================================================
 
     /*
     @GET
@@ -153,7 +152,6 @@ public class CoffeeshopResource //implements Switch
     @Path("/cancel_group_item/{userPattern}")
     public Response cancelGroupItem(@PathParam("userPattern") String userPattern){
 
-        //TODO How to delete based on userPattern in a non-Item JSON object ?
         System.err.println(userPattern);
         try{
             coffeeshopDao.removeGroupItemByName("%" + userPattern + "%");
