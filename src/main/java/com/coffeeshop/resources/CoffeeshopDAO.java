@@ -33,40 +33,40 @@ public interface CoffeeshopDAO {
     void updateItem(@Bind("name") String name, @Bind("costInCents") int costInCents,
                     @Bind("menuId") int menuId);
 
-    //Initial order
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS item" +
-            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
-    void createItemTable();
-
-    //item#show
-    @Mapper(ItemMapper.class)
-    @SqlQuery("SELECT * FROM item WHERE id = :id")
-    Item findItemById(@Bind("id") int id);
-
-    //Not for customer use
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS menus" +
-            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
-    void createMenuTable();
-
     //menu#index
     @Mapper(MenuMapper.class)
     @SqlQuery("SELECT * FROM menus")
     List<Menu> findAllMenu();
+
+    //Not integrated yet, for demo only ============================================================
+
+    //item#destroy
+    @Mapper(ItemMapper.class)
+    @SqlQuery("SELECT * FROM item WHERE id = :id")
+    Item findItemById(@Bind("id") int id);
+    @SqlUpdate("DELETE FROM item WHERE id = :id")
+    void removeItem(@Bind("id") int id);
+
+    //Create menu (not for customer use)
+    @SqlUpdate("CREATE TABLE IF NOT EXISTS menus" +
+            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER)")
+    void createMenuTable();
+
+    //Initial order item (not for customer use)
+    @SqlUpdate("CREATE TABLE IF NOT EXISTS item" +
+            "(id INTEGER PRIMARY KEY, name TEXT, costInCents INTEGER, menuId INTEGER)")
+    void createItemTable();
+
+    //Not supported yet=============================================================================
 
     //menu#show
     @Mapper(MenuMapper.class)
     @SqlQuery("SELECT * FROM menus WHERE id = :id")
     Menu findMenuById(@Bind("id") int id);
 
-    //Not supported yet=============================================================================
-
     @Mapper(ItemMapper.class)
     @SqlQuery("SELECT * FROM item WHERE name LIKE :pattern")
     List<Item> findItemByName(@Bind("pattern") String pattern);
-
-    //Remove Items individually
-    @SqlUpdate("DELETE FROM item WHERE id = :id")
-    void removeItem(@Bind("id") int id);
 
     //Remove Items in group
     @SqlUpdate("DELETE FROM item WHERE name LIKE :pattern")

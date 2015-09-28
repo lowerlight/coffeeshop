@@ -26,24 +26,17 @@ public class CoffeeshopResource {
     private final CoffeeshopDAO coffeeshopDao;
     private final String template;
     private final String defaultName;
-    //private final AtomicLong counter;
 
     public CoffeeshopResource(DBI jdbi, String template, String defaultName) {
         this.coffeeshopDao = jdbi.onDemand(CoffeeshopDAO.class);
         this.template = template;
         this.defaultName = defaultName;
-        //this.counter = new AtomicLong();
     }
-
-    //Sample usage:
-    //final int cost = 0;
-    //final String value = String.format(template, defaultName);
-    //return new Item(((int) counter.incrementAndGet()), value, cost);
 
     //items#index
     @GET
     @Timed
-    @Path("/items.json")
+    @Path("items.json")
     public List<Item> findAllOrder() {
         // retrieve all order items
         List<Item> itemList = coffeeshopDao.findAllItem();
@@ -55,7 +48,7 @@ public class CoffeeshopResource {
     //items#create
     @POST
     @Timed
-    @Path("/items/new/{menuId}.json")
+    @Path("items/new/{menuId}.json")
     public Response createItem(@PathParam("menuId") int menuId)
     {
         Menu menu = coffeeshopDao.prepareItemFromMenuId(menuId);
@@ -77,22 +70,10 @@ public class CoffeeshopResource {
         //TODO Optimise SQL of updating and displaying all orders back at the same time
     }
 
-    //items#show
-    @GET
-    @Timed
-    @Path("/items.json/{id}")
-    public Item findOrder(@PathParam("id") int id) {
-        // retrieve information about the drink with the provided id
-        Item item = coffeeshopDao.findItemById(id);
-        if (item != null) {
-            return item;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
     //menus#index
     @GET
     @Timed
-    @Path("/menus.json")
+    @Path("menus.json")
     public List<Menu> findAllMenu() {
         // retrieve all menu
         List<Menu> menuList = coffeeshopDao.findAllMenu();
@@ -101,30 +82,17 @@ public class CoffeeshopResource {
         } throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    //menus#show
-    @GET
-    @Timed
-    @Path("/menus.json/{id}")
-    public Menu findMenu(@PathParam("id") int id) {
-        // retrieve information about the drink with the provided id
-        Menu menu = coffeeshopDao.findMenuById(id);
-        if (menu != null) {
-            return menu;
-        } throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
-    //Not supported yet=============================================================================
+    //Not integrated yet, for demo only ============================================================
 
     //items#destroy
     @DELETE
     @Timed
-    @Path("/items.json/{id}")
+    @Path("items/{id}.json")
     public Response cancelItem(@PathParam("id") int id){
-
-        //TODO How to delete based on id only in a non-Item JSON object ?
-        System.err.println(id);
         try{
+            Item item = coffeeshopDao.findItemById(id);
             coffeeshopDao.removeItem(id);
+            System.err.println("Cancelled item " + item.getName() + " " + item.getCostInCents());
             return Response.noContent().build();
         }
         catch(Exception e) {
@@ -133,6 +101,32 @@ public class CoffeeshopResource {
             //return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
         }
     }
+
+    //menus#show
+    @GET
+    @Timed
+    @Path("menus/{id}.json")
+    public Menu findMenu(@PathParam("id") int id) {
+        // retrieve information about the drink with the provided id
+        Menu menu = coffeeshopDao.findMenuById(id);
+        if (menu != null) {
+            return menu;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //items#show
+    @GET
+    @Timed
+    @Path("items/{id}.json")
+    public Item findOrder(@PathParam("id") int id) {
+        // retrieve information about the drink with the provided id
+        Item item = coffeeshopDao.findItemById(id);
+        if (item != null) {
+            return item;
+        } throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    //Not supported yet=============================================================================
 
     /*
     @GET
