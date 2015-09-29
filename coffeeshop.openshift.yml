@@ -31,7 +31,7 @@ database:
 server:
   applicationConnectors:
     - type: http
-      bindHost: 127.7.26.129
+      bindHost: 127.0.0.1 # only bind to loopback
       port: 8080
   requestLog:
     timeZone: Asia/Singapore
