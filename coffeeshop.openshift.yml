@@ -1,0 +1,5 @@
+http:
+    bindHost: @OPENSHIFT_DIY_IP@
+    adminPort: @OPENSHIFT_DIY_PORT@
+template: Order from Openshift %s
+defaultName: Coffee
