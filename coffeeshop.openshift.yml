@@ -31,8 +31,12 @@ database:
 server:
   applicationConnectors:
     - type: http
-      bindHost: 127.0.0.1 # only bind to loopback
+      bindHost: @OPENSHIFT_DIY_IP@
       port: 8080
+adminConnectors:
+    - type: http
+      bindHost: @OPENSHIFT_DIY_IP@
+      port: 8081 
   requestLog:
     timeZone: Asia/Singapore
 
