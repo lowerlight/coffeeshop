@@ -33,7 +33,7 @@ server:
     - type: http
       bindHost: @OPENSHIFT_DIY_IP@
       port: 8080
-adminConnectors:
+  adminConnectors:
     - type: http
       bindHost: @OPENSHIFT_DIY_IP@
       port: 8081 
